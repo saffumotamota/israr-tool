@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Encoder/Decoder - Multi-Tools</title>
+    <meta name="description" content="Encode and decode URLs, query parameters, and special characters. Parse URL components and convert between different URL formats.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .url-input {
+            font-family: monospace;
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .param-table {
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        
+        .param-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .param-row:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .param-name {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .param-value {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .url-components {
+            font-size: 0.875rem;
+            margin-top: 1rem;
+        }
+        
+        .url-component {
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .url-component label {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            color: #6c757d;
+        }
+        
+        .url-component code {
+            display: block;
+            word-break: break-all;
+        }
+        
+        .encode-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .encode-options .form-check {
+            min-width: 200px;
+        }
+        
+        .history-item {
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .history-item .type {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 0.25rem;
+        }
+        
+        .history-item .content {
+            font-family: monospace;
+            word-break: break-all;
+        }
+        
+        .history-item .actions {
+            margin-top: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded here -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        <div class="row">
+            <!-- Tool Section -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h4 mb-0">URL Encoder/Decoder</h1>
+                    </div>
+                    <div class="card-body">
+                        <!-- URL Input -->
+                        <div class="mb-4">
+                            <label for="urlInput" class="form-label">Enter URL or text to encode/decode:</label>
+                            <textarea class="form-control url-input" id="urlInput" rows="4" placeholder="https://example.com/path?param1=value1&param2=value2"></textarea>
+                        </div>
+
+                        <!-- Encode Options -->
+                        <div class="encode-options">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="encodeSpaces" checked>
+                                <label class="form-check-label" for="encodeSpaces">
+                                    Encode spaces as +
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="encodeUnicode" checked>
+                                <label class="form-check-label" for="encodeUnicode">
+                                    Encode Unicode characters
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="encodeReserved">
+                                <label class="form-check-label" for="encodeReserved">
+                                    Encode reserved characters
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="row mb-4">
+                            <div class="col-sm-6 mb-2">
+                                <button class="btn btn-primary w-100" id="encodeBtn">
+                                    <i class="fas fa-lock me-2"></i>Encode URL
+                                </button>
+                            </div>
+                            <div class="col-sm-6 mb-2">
+                                <button class="btn btn-secondary w-100" id="decodeBtn">
+                                    <i class="fas fa-unlock me-2"></i>Decode URL
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- URL Components -->
+                        <div class="url-components" id="urlComponents">
+                            <h5 class="mb-3">URL Components</h5>
+                            <div class="url-component">
+                                <label>Protocol</label>
+                                <code id="protocolComponent">-</code>
+                            </div>
+                            <div class="url-component">
+                                <label>Hostname</label>
+                                <code id="hostnameComponent">-</code>
+                            </div>
+                            <div class="url-component">
+                                <label>Port</label>
+                                <code id="portComponent">-</code>
+                            </div>
+                            <div class="url-component">
+                                <label>Path</label>
+                                <code id="pathComponent">-</code>
+                            </div>
+                            <div class="url-component">
+                                <label>Query String</label>
+                                <code id="queryComponent">-</code>
+                            </div>
+                            <div class="url-component">
+                                <label>Hash/Fragment</label>
+                                <code id="hashComponent">-</code>
+                            </div>
+                        </div>
+
+                        <!-- Query Parameters -->
+                        <div class="mt-4">
+                            <h5 class="mb-3">Query Parameters</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered param-table" id="paramTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Value</th>
+                                            <th>Decoded Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="3" class="text-center text-muted">No parameters found</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Conversion History -->
+                        <div class="card mt-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Recent Conversions</h5>
+                                <button class="btn btn-sm btn-outline-danger" id="clearHistoryBtn">
+                                    <i class="fas fa-trash-alt me-2"></i>Clear History
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div id="conversionHistory"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool Description -->
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5">About URL Encoder/Decoder</h2>
+                        <p>Convert URLs and text between encoded and decoded formats. Parse URL components and query parameters for easy analysis and modification.</p>
+                        
+                        <h3 class="h5 mt-4">Features:</h3>
+                        <ul>
+                            <li>Encode and decode URLs and query parameters</li>
+                            <li>Parse URL components (protocol, hostname, path, etc.)</li>
+                            <li>View and analyze query parameters</li>
+                            <li>Multiple encoding options</li>
+                            <li>Conversion history</li>
+                            <li>Copy results with one click</li>
+                        </ul>
+
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Tip:</strong> Use the encoding options to control how special characters are handled during conversion.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Ad Section -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="ad-banner">
+                            <p class="text-muted">Advertisement</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Tools -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="h5 mb-0">Related Tools</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <a href="base64-encoder.html" class="text-decoration-none">
+                                    <i class="fas fa-exchange-alt me-2"></i>Base64 Encoder/Decoder
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="json-formatter.html" class="text-decoration-none">
+                                    <i class="fas fa-code me-2"></i>JSON Formatter
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="html-encoder.html" class="text-decoration-none">
+                                    <i class="fas fa-code me-2"></i>HTML Encoder/Decoder
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded here -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="../js/loadComponents.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elements
+            const urlInput = document.getElementById('urlInput');
+            const encodeBtn = document.getElementById('encodeBtn');
+            const decodeBtn = document.getElementById('decodeBtn');
+            const encodeSpaces = document.getElementById('encodeSpaces');
+            const encodeUnicode = document.getElementById('encodeUnicode');
+            const encodeReserved = document.getElementById('encodeReserved');
+            const conversionHistory = document.getElementById('conversionHistory');
+            const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+            const paramTable = document.getElementById('paramTable');
+            
+            // URL component elements
+            const components = {
+                protocol: document.getElementById('protocolComponent'),
+                hostname: document.getElementById('hostnameComponent'),
+                port: document.getElementById('portComponent'),
+                path: document.getElementById('pathComponent'),
+                query: document.getElementById('queryComponent'),
+                hash: document.getElementById('hashComponent')
+            };
+            
+            // Parse URL components
+            function parseURL(url) {
+                try {
+                    const parsedURL = new URL(url);
+                    return {
+                        protocol: parsedURL.protocol,
+                        hostname: parsedURL.hostname,
+                        port: parsedURL.port,
+                        path: parsedURL.pathname,
+                        query: parsedURL.search,
+                        hash: parsedURL.hash
+                    };
+                } catch (e) {
+                    return null;
+                }
+            }
+            
+            // Update URL components display
+            function updateComponents(url) {
+                const parsed = parseURL(url);
+                if (parsed) {
+                    Object.entries(parsed).forEach(([key, value]) => {
+                        components[key].textContent = value || '-';
+                    });
+                } else {
+                    Object.values(components).forEach(el => el.textContent = '-');
+                }
+            }
+            
+            // Parse query parameters
+            function parseQueryParams(url) {
+                try {
+                    const params = new URLSearchParams(new URL(url).search);
+                    const rows = [];
+                    for (const [key, value] of params) {
+                        rows.push(`
+                            <tr class="param-row">
+                                <td class="param-name">${key}</td>
+                                <td class="param-value">${value}</td>
+                                <td class="param-value">${decodeURIComponent(value)}</td>
+                            </tr>
+                        `);
+                    }
+                    return rows.join('') || '<tr><td colspan="3" class="text-center text-muted">No parameters found</td></tr>';
+                } catch (e) {
+                    return '<tr><td colspan="3" class="text-center text-muted">Invalid URL</td></tr>';
+                }
+            }
+            
+            // Encode URL
+            function encodeURL(url) {
+                try {
+                    if (!url.trim()) return '';
+                    
+                    let encoded = url;
+                    if (encodeUnicode.checked) {
+                        encoded = encodeURIComponent(encoded);
+                    }
+                    if (encodeSpaces.checked) {
+                        encoded = encoded.replace(/%20/g, '+');
+                    }
+                    if (!encodeReserved.checked) {
+                        encoded = encoded.replace(/%3A/g, ':')
+                            .replace(/%2F/g, '/')
+                            .replace(/%3F/g, '?')
+                            .replace(/%3D/g, '=')
+                            .replace(/%26/g, '&')
+                            .replace(/%23/g, '#');
+                    }
+                    return encoded;
+                } catch (e) {
+                    console.error('Encoding error:', e);
+                    return url;
+                }
+            }
+            
+            // Decode URL
+            function decodeURL(url) {
+                try {
+                    if (!url.trim()) return '';
+                    return decodeURIComponent(url.replace(/\+/g, ' '));
+                } catch (e) {
+                    console.error('Decoding error:', e);
+                    return url;
+                }
+            }
+            
+            // Save to history
+            function saveToHistory(original, converted, type) {
+                const history = JSON.parse(localStorage.getItem('urlHistory') || '[]');
+                history.unshift({ original, converted, type, timestamp: Date.now() });
+                if (history.length > 10) history.pop();
+                localStorage.setItem('urlHistory', JSON.stringify(history));
+                updateHistory();
+            }
+            
+            // Update history display
+            function updateHistory() {
+                const history = JSON.parse(localStorage.getItem('urlHistory') || '[]');
+                conversionHistory.innerHTML = history.map(item => `
+                    <div class="history-item">
+                        <div class="type">
+                            <i class="fas fa-exchange-alt me-2"></i>${item.type}
+                        </div>
+                        <div class="content">${item.converted}</div>
+                        <div class="actions">
+                            <button class="btn btn-sm btn-light" onclick="navigator.clipboard.writeText('${item.converted}')">
+                                <i class="fas fa-copy me-1"></i>Copy
+                            </button>
+                            <button class="btn btn-sm btn-light" onclick="document.getElementById('urlInput').value = '${item.converted}'; updateComponents('${item.converted}'); document.getElementById('paramTable').innerHTML = parseQueryParams('${item.converted}');">
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Event listeners
+            urlInput.addEventListener('input', () => {
+                const url = urlInput.value;
+                updateComponents(url);
+                paramTable.innerHTML = parseQueryParams(url);
+            });
+            
+            encodeBtn.addEventListener('click', () => {
+                const original = urlInput.value;
+                const encoded = encodeURL(original);
+                urlInput.value = encoded;
+                updateComponents(encoded);
+                paramTable.innerHTML = parseQueryParams(encoded);
+                if (original.trim() && encoded.trim()) {
+                    saveToHistory(original, encoded, 'Encoded URL');
+                }
+            });
+            
+            decodeBtn.addEventListener('click', () => {
+                const original = urlInput.value;
+                const decoded = decodeURL(original);
+                urlInput.value = decoded;
+                updateComponents(decoded);
+                paramTable.innerHTML = parseQueryParams(decoded);
+                if (original.trim() && decoded.trim()) {
+                    saveToHistory(original, decoded, 'Decoded URL');
+                }
+            });
+            
+            clearHistoryBtn.addEventListener('click', () => {
+                localStorage.removeItem('urlHistory');
+                updateHistory();
+            });
+            
+            // Initial setup
+            updateHistory();
+        });
+    </script>
+</body>
+</html> 

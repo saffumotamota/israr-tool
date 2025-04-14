@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Converter | Convert Files Between Multiple Formats - Multi-Tools</title>
+    <meta name="description" content="Free online file converter. Convert images, documents, audio, and video files between different formats. Support for PNG, JPG, PDF, DOC, MP3, MP4, and more formats.">
+    <meta name="keywords" content="file converter, online converter, format converter, image converter, document converter, audio converter, video converter, pdf converter">
+    <meta name="author" content="Israr Ahmed">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="File Converter | Convert Files Between Multiple Formats">
+    <meta property="og:description" content="Convert your files between different formats online. Free converter for images, documents, audio, and video files.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://multi-tools.com/tools/file-converter.html">
+    <meta property="og:image" content="https://multi-tools.com/images/file-converter-preview.jpg">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="File Converter | Convert Files Online">
+    <meta name="twitter:description" content="Convert files between different formats. Support for images, documents, audio, and video files.">
+    <meta name="twitter:image" content="https://multi-tools.com/images/file-converter-preview.jpg">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://multi-tools.com/tools/file-converter.html">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "File Converter",
+        "url": "https://multi-tools.com/tools/file-converter.html",
+        "description": "Free online file converter supporting multiple formats. Convert images, documents, audio, and video files instantly.",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Multiple file format support",
+            "Batch conversion",
+            "Image format conversion",
+            "Document format conversion",
+            "Audio format conversion",
+            "Video format conversion",
+            "Preserve file quality",
+            "Fast conversion speed"
+        ],
+        "screenshot": "https://multi-tools.com/images/file-converter-preview.jpg",
+        "creator": {
+            "@type": "Organization",
+            "name": "Multi-Tools"
+        }
+    }
+    </script>
+    <style>
+        .drop-zone {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: border-color 0.3s ease;
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+        
+        .drop-zone.drag-over {
+            border-color: #0d6efd;
+            background: #e9ecef;
+        }
+        
+        .file-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .file-item .file-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+        
+        .file-item .file-info {
+            flex-grow: 1;
+        }
+        
+        .file-item .file-name {
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+        
+        .file-item .file-size {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        
+        .format-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .progress-small {
+            height: 4px;
+            margin-top: 0.5rem;
+        }
+        
+        .conversion-options {
+            display: none;
+        }
+        
+        .conversion-options.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded here -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        <div class="row">
+            <!-- Tool Section -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h4 mb-0">File Converter</h1>
+                    </div>
+                    <div class="card-body">
+                        <!-- Tool Description -->
+                        <div class="mb-4">
+                            <p class="lead">Convert your files between different formats with our free online converter. Support for images, documents, audio, and video files.</p>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div class="drop-zone mb-4" id="dropZone">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                            <h5>Drag & Drop Files Here</h5>
+                            <p class="text-muted mb-2">or</p>
+                            <button class="btn btn-primary" id="browseBtn">
+                                <i class="fas fa-folder-open me-2"></i>Browse Files
+                            </button>
+                            <input type="file" id="fileInput" multiple style="display: none;">
+                        </div>
+
+                        <!-- File List -->
+                        <div class="file-list mb-4" id="fileList"></div>
+
+                        <!-- Conversion Options -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Conversion Options</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Format Selection -->
+                                <div class="mb-3">
+                                    <label class="form-label">Convert To:</label>
+                                    <select class="form-select" id="formatSelect">
+                                        <option value="">Select output format...</option>
+                                        <optgroup label="Images">
+                                            <option value="jpg">JPG</option>
+                                            <option value="png">PNG</option>
+                                            <option value="webp">WebP</option>
+                                            <option value="gif">GIF</option>
+                                        </optgroup>
+                                        <optgroup label="Documents">
+                                            <option value="pdf">PDF</option>
+                                            <option value="docx">DOCX</option>
+                                            <option value="txt">TXT</option>
+                                        </optgroup>
+                                        <optgroup label="Audio">
+                                            <option value="mp3">MP3</option>
+                                            <option value="wav">WAV</option>
+                                            <option value="ogg">OGG</option>
+                                        </optgroup>
+                                        <optgroup label="Video">
+                                            <option value="mp4">MP4</option>
+                                            <option value="webm">WebM</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+
+                                <!-- Image Options -->
+                                <div id="imageOptions" class="conversion-options">
+                                    <div class="mb-3">
+                                        <label class="form-label">Quality:</label>
+                                        <input type="range" class="form-range" min="1" max="100" value="90" id="imageQuality">
+                                        <div class="text-end">
+                                            <span id="qualityValue">90%</span>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Resize:</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="imageWidth" placeholder="Width">
+                                            <span class="input-group-text">×</span>
+                                            <input type="number" class="form-control" id="imageHeight" placeholder="Height">
+                                            <button class="btn btn-outline-secondary" type="button" id="maintainRatio">
+                                                <i class="fas fa-link"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Document Options -->
+                                <div id="documentOptions" class="conversion-options">
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="preserveLinks">
+                                            <label class="form-check-label" for="preserveLinks">
+                                                Preserve hyperlinks
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="preserveImages">
+                                            <label class="form-check-label" for="preserveImages">
+                                                Preserve images
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Audio Options -->
+                                <div id="audioOptions" class="conversion-options">
+                                    <div class="mb-3">
+                                        <label class="form-label">Bitrate:</label>
+                                        <select class="form-select" id="audioBitrate">
+                                            <option value="128">128 kbps</option>
+                                            <option value="192">192 kbps</option>
+                                            <option value="256">256 kbps</option>
+                                            <option value="320">320 kbps</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Video Options -->
+                                <div id="videoOptions" class="conversion-options">
+                                    <div class="mb-3">
+                                        <label class="form-label">Quality:</label>
+                                        <select class="form-select" id="videoQuality">
+                                            <option value="high">High (1080p)</option>
+                                            <option value="medium">Medium (720p)</option>
+                                            <option value="low">Low (480p)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Convert Button -->
+                        <button class="btn btn-primary w-100" id="convertBtn" disabled>
+                            <i class="fas fa-sync-alt me-2"></i>Convert Files
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tool Description -->
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5">About File Converter</h2>
+                        <p>Convert your files between different formats with our free online converter. This tool processes files locally in your browser for maximum privacy and security.</p>
+                        
+                        <h3 class="h5 mt-4">Features:</h3>
+                        <ul>
+                            <li>Support for multiple file formats</li>
+                            <li>Batch conversion capability</li>
+                            <li>High-quality output</li>
+                            <li>Customizable conversion options</li>
+                            <li>Local file processing</li>
+                            <li>Fast conversion speed</li>
+                        </ul>
+
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Note:</strong> All file processing is done locally in your browser. Your files are never uploaded to any server.
+                        </div>
+
+                        <div class="mt-4 text-muted small">
+                            <p>© 2024 Developed by Israr Ahmed. All rights reserved.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Ad Section -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="ad-banner">
+                            <p class="text-muted">Advertisement</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Tools -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="h5 mb-0">Related Tools</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <a href="image-compressor.html" class="text-decoration-none">
+                                    <i class="fas fa-compress me-2"></i>Image Compressor
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="pdf-tools.html" class="text-decoration-none">
+                                    <i class="fas fa-file-pdf me-2"></i>PDF Tools
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="video-converter.html" class="text-decoration-none">
+                                    <i class="fas fa-video me-2"></i>Video Converter
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded here -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="../js/loadComponents.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elements
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            const browseBtn = document.getElementById('browseBtn');
+            const fileList = document.getElementById('fileList');
+            const formatSelect = document.getElementById('formatSelect');
+            const convertBtn = document.getElementById('convertBtn');
+            const optionPanels = {
+                image: document.getElementById('imageOptions'),
+                document: document.getElementById('documentOptions'),
+                audio: document.getElementById('audioOptions'),
+                video: document.getElementById('videoOptions')
+            };
+            
+            // File list
+            const files = new Set();
+            
+            // Handle drag and drop
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            });
+            
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('drag-over');
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                handleFiles(e.dataTransfer.files);
+            });
+            
+            // Handle file input
+            browseBtn.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+            
+            // Handle format selection
+            formatSelect.addEventListener('change', () => {
+                const format = formatSelect.value;
+                showOptions(format);
+                updateConvertButton();
+            });
+            
+            // Handle files
+            function handleFiles(fileList) {
+                Array.from(fileList).forEach(file => {
+                    if (!files.has(file)) {
+                        files.add(file);
+                        addFileToList(file);
+                    }
+                });
+                updateConvertButton();
+            }
+            
+            // Add file to list
+            function addFileToList(file) {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.setAttribute('data-filename', file.name);
+                
+                const icon = getFileIcon(file.type);
+                const size = formatFileSize(file.size);
+                
+                item.innerHTML = `
+                    <i class="file-icon ${icon}"></i>
+                    <div class="file-info">
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-size">${size}</div>
+                        <div class="progress progress-small d-none">
+                            <div class="progress-bar" role="progressbar"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger ms-2" onclick="removeFile(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                fileList.appendChild(item);
+            }
+            
+            // Get file icon
+            function getFileIcon(type) {
+                if (type.startsWith('image/')) return 'fas fa-image';
+                if (type.startsWith('video/')) return 'fas fa-video';
+                if (type.startsWith('audio/')) return 'fas fa-music';
+                if (type.includes('pdf')) return 'fas fa-file-pdf';
+                if (type.includes('document')) return 'fas fa-file-word';
+                return 'fas fa-file';
+            }
+            
+            // Format file size
+            function formatFileSize(bytes) {
+                const units = ['B', 'KB', 'MB', 'GB'];
+                let size = bytes;
+                let unit = 0;
+                
+                while (size >= 1024 && unit < units.length - 1) {
+                    size /= 1024;
+                    unit++;
+                }
+                
+                return `${size.toFixed(1)} ${units[unit]}`;
+            }
+            
+            // Show options based on format
+            function showOptions(format) {
+                Object.values(optionPanels).forEach(panel => {
+                    panel.classList.remove('active');
+                });
+                
+                if (['jpg', 'png', 'webp', 'gif'].includes(format)) {
+                    optionPanels.image.classList.add('active');
+                } else if (['pdf', 'docx', 'txt'].includes(format)) {
+                    optionPanels.document.classList.add('active');
+                } else if (['mp3', 'wav', 'ogg'].includes(format)) {
+                    optionPanels.audio.classList.add('active');
+                } else if (['mp4', 'webm'].includes(format)) {
+                    optionPanels.video.classList.add('active');
+                }
+            }
+            
+            // Update convert button state
+            function updateConvertButton() {
+                convertBtn.disabled = files.size === 0 || !formatSelect.value;
+            }
+            
+            // Remove file
+            window.removeFile = function(button) {
+                const item = button.closest('.file-item');
+                const fileName = item.querySelector('.file-name').textContent;
+                
+                files.forEach(file => {
+                    if (file.name === fileName) {
+                        files.delete(file);
+                    }
+                });
+                
+                item.remove();
+                updateConvertButton();
+            };
+            
+            // Handle conversion
+            convertBtn.addEventListener('click', async () => {
+                try {
+                    const format = formatSelect.value;
+                    if (!format) {
+                        showError('Please select an output format');
+                        return;
+                    }
+
+                    const fileArray = Array.from(files);
+                    if (fileArray.length === 0) {
+                        showError('Please add files to convert');
+                        return;
+                    }
+
+                    for (const file of fileArray) {
+                        const item = document.querySelector(`[data-filename="${file.name}"]`);
+                        const progressBar = item.querySelector('.progress-bar');
+                        const progressDiv = item.querySelector('.progress');
+
+                        progressDiv.classList.remove('d-none');
+                        progressBar.style.width = '0%';
+
+                        try {
+                            // Image conversion
+                            if (['jpg', 'png', 'webp', 'gif'].includes(format)) {
+                                await convertImage(file, format, progressBar);
+                            }
+                            // Document conversion (basic text extraction)
+                            else if (['txt'].includes(format)) {
+                                await convertToText(file, progressBar);
+                            }
+                            // Audio/Video conversion placeholder
+                            else {
+                                throw new Error('Format conversion not yet implemented');
+                            }
+
+                            progressBar.style.width = '100%';
+                            progressBar.classList.add('bg-success');
+                        } catch (error) {
+                            console.error('Conversion error:', error);
+                            progressBar.classList.add('bg-danger');
+                            showError(`Error converting ${file.name}: ${error.message}`);
+                        }
+                    }
+                } catch (error) {
+                    showError('Conversion error: ' + error.message);
+                }
+            });
+
+            // Image conversion function
+            async function convertImage(file, format, progressBar) {
+                return new Promise((resolve, reject) => {
+                    if (!file.type.startsWith('image/')) {
+                        reject(new Error('Not an image file'));
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.onload = function() {
+                            try {
+                                const canvas = document.createElement('canvas');
+                                const ctx = canvas.getContext('2d');
+                                canvas.width = img.width;
+                                canvas.height = img.height;
+                                ctx.drawImage(img, 0, 0);
+
+                                progressBar.style.width = '50%';
+
+                                // Convert and download
+                                canvas.toBlob((blob) => {
+                                    if (!blob) {
+                                        reject(new Error('Conversion failed'));
+                                        return;
+                                    }
+
+                                    const url = URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = `${file.name.split('.')[0]}.${format}`;
+                                    a.click();
+                                    URL.revokeObjectURL(url);
+                                    resolve();
+                                }, `image/${format}`);
+                            } catch (error) {
+                                reject(error);
+                            }
+                        };
+                        img.onerror = () => reject(new Error('Failed to load image'));
+                        img.src = e.target.result;
+                    };
+                    reader.onerror = () => reject(new Error('Failed to read file'));
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // Text conversion function
+            async function convertToText(file, progressBar) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const text = e.target.result;
+                            progressBar.style.width = '50%';
+
+                            // Create and download text file
+                            const blob = new Blob([text], { type: 'text/plain' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `${file.name.split('.')[0]}.txt`;
+                            a.click();
+                            URL.revokeObjectURL(url);
+                            resolve();
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                    reader.onerror = () => reject(new Error('Failed to read file'));
+                    reader.readAsText(file);
+                });
+            }
+
+            // Error handling functions
+            function showError(message) {
+                const errorDiv = document.getElementById('errorMessage') || createErrorDiv();
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+
+            function createErrorDiv() {
+                const div = document.createElement('div');
+                div.id = 'errorMessage';
+                div.className = 'alert alert-danger mt-3';
+                div.style.display = 'none';
+                document.querySelector('.card-body').insertBefore(
+                    div,
+                    document.querySelector('.card-body').firstChild
+                );
+                return div;
+            }
+
+            // Image quality slider
+            const imageQuality = document.getElementById('imageQuality');
+            const qualityValue = document.getElementById('qualityValue');
+            
+            imageQuality.addEventListener('input', () => {
+                qualityValue.textContent = `${imageQuality.value}%`;
+            });
+            
+            // Maintain aspect ratio
+            const maintainRatio = document.getElementById('maintainRatio');
+            let aspectRatioLocked = true;
+            
+            maintainRatio.addEventListener('click', () => {
+                aspectRatioLocked = !aspectRatioLocked;
+                maintainRatio.classList.toggle('active');
+                maintainRatio.querySelector('i').classList.toggle('fa-link');
+                maintainRatio.querySelector('i').classList.toggle('fa-unlink');
+            });
+        });
+    </script>
+</body>
+</html> 

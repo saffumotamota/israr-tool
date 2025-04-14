@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics Calculator | Data Analysis & Statistical Calculations - Multi-Tools</title>
+    <meta name="description" content="Free online statistics calculator. Calculate mean, median, mode, standard deviation, variance, correlation, and more. Perfect for data analysis and statistical research.">
+    <meta name="keywords" content="statistics calculator, data analysis, mean calculator, median calculator, standard deviation, variance, correlation, statistical analysis">
+    <meta name="author" content="Israr Ahmed">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Statistics Calculator | Data Analysis Tool">
+    <meta property="og:description" content="Perform statistical calculations online. Calculate descriptive statistics, probability, correlation, and more.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://multi-tools.com/tools/statistics-calculator.html">
+    <meta property="og:image" content="https://multi-tools.com/images/statistics-calculator-preview.jpg">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Statistics Calculator | Data Analysis">
+    <meta name="twitter:description" content="Calculate mean, median, mode, standard deviation, variance, and more with our free statistics calculator.">
+    <meta name="twitter:image" content="https://multi-tools.com/images/statistics-calculator-preview.jpg">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://multi-tools.com/tools/statistics-calculator.html">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Statistics Calculator",
+        "url": "https://multi-tools.com/tools/statistics-calculator.html",
+        "description": "Online statistics calculator for data analysis and statistical calculations.",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Descriptive Statistics",
+            "Probability Calculations",
+            "Correlation Analysis",
+            "Data Visualization",
+            "Distribution Analysis",
+            "Hypothesis Testing"
+        ]
+    }
+    </script>
+    <style>
+        .data-input {
+            min-height: 150px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        
+        .results-table {
+            font-size: 0.9rem;
+        }
+        
+        .results-table th {
+            width: 40%;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 1rem;
+        }
+        
+        .nav-pills .nav-link {
+            color: #6c757d;
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        
+        .sample-data {
+            color: #0d6efd;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .sample-data:hover {
+            text-decoration: underline;
+        }
+        
+        .tooltip-info {
+            cursor: help;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded here -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        <div class="row">
+            <!-- Tool Section -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h4 mb-0">Statistics Calculator</h1>
+                    </div>
+                    <div class="card-body">
+                        <!-- Tool Description -->
+                        <div class="mb-4">
+                            <p class="lead">Calculate descriptive statistics, probability, correlation, and more with our comprehensive statistics calculator.</p>
+                        </div>
+
+                        <!-- Data Input -->
+                        <div class="mb-4">
+                            <label class="form-label">Enter Data (one number per line or comma-separated):</label>
+                            <textarea class="form-control data-input" id="dataInput" rows="6" placeholder="Example:
+23, 45, 67, 89
+or
+23
+45
+67
+89"></textarea>
+                            <div class="mt-2">
+                                <span class="sample-data" onclick="loadSampleData('normal')">Load Normal Distribution Sample</span> |
+                                <span class="sample-data" onclick="loadSampleData('bimodal')">Load Bimodal Sample</span>
+                            </div>
+                        </div>
+
+                        <!-- Analysis Options -->
+                        <div class="mb-4">
+                            <ul class="nav nav-pills mb-3" id="analysisTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="descriptive-tab" data-bs-toggle="pill" data-bs-target="#descriptive" type="button">Descriptive Stats</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="distribution-tab" data-bs-toggle="pill" data-bs-target="#distribution" type="button">Distribution</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="probability-tab" data-bs-toggle="pill" data-bs-target="#probability" type="button">Probability</button>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content" id="analysisTabContent">
+                                <!-- Descriptive Statistics -->
+                                <div class="tab-pane fade show active" id="descriptive">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <table class="table table-sm results-table">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Count</th>
+                                                        <td id="count">-</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Mean <i class="fas fa-info-circle tooltip-info" title="Arithmetic average of the data"></i></th>
+                                                        <td id="mean">-</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Median</th>
+                                                        <td id="median">-</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Mode</th>
+                                                        <td id="mode">-</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <table class="table table-sm results-table">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Standard Deviation <i class="fas fa-info-circle tooltip-info" title="Measure of data spread"></i></th>
+                                                        <td id="stdDev">-</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Variance</th>
+                                                        <td id="variance">-</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Range</th>
+                                                        <td id="range">-</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Sum</th>
+                                                        <td id="sum">-</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Distribution Analysis -->
+                                <div class="tab-pane fade" id="distribution">
+                                    <div class="chart-container">
+                                        <canvas id="distributionChart"></canvas>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <table class="table table-sm results-table">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Skewness <i class="fas fa-info-circle tooltip-info" title="Measure of distribution asymmetry"></i></th>
+                                                        <td id="skewness">-</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Kurtosis <i class="fas fa-info-circle tooltip-info" title="Measure of distribution tail weight"></i></th>
+                                                        <td id="kurtosis">-</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Probability Analysis -->
+                                <div class="tab-pane fade" id="probability">
+                                    <div class="mb-3">
+                                        <label class="form-label">Z-Score Calculator:</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="zScoreInput" placeholder="Enter value">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="calculateZScore()">Calculate</button>
+                                        </div>
+                                        <div id="zScoreResult" class="mt-2"></div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Percentile Calculator:</label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control" id="percentileInput" placeholder="Enter value">
+                                            <button class="btn btn-outline-secondary" type="button" onclick="calculatePercentile()">Calculate</button>
+                                        </div>
+                                        <div id="percentileResult" class="mt-2"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Calculate Button -->
+                        <button class="btn btn-primary w-100" onclick="calculateStatistics()">
+                            <i class="fas fa-calculator me-2"></i>Calculate Statistics
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tool Description -->
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5">About Statistics Calculator</h2>
+                        <p>Our statistics calculator provides comprehensive statistical analysis tools for your data. Whether you're a student, researcher, or professional, this calculator helps you analyze and understand your data better.</p>
+                        
+                        <h3 class="h5 mt-4">Features:</h3>
+                        <ul>
+                            <li>Descriptive Statistics (mean, median, mode, etc.)</li>
+                            <li>Distribution Analysis with visualization</li>
+                            <li>Probability Calculations (z-scores, percentiles)</li>
+                            <li>Data Visualization with charts</li>
+                            <li>Easy data input with sample datasets</li>
+                            <li>Instant calculations and results</li>
+                        </ul>
+
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Tip:</strong> Use comma-separated values or one number per line for data input. Try our sample datasets to see how it works!
+                        </div>
+
+                        <div class="mt-4 text-muted small">
+                            <p>© 2024 Developed by Israr Ahmed. All rights reserved.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Ad Section -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="ad-banner">
+                            <p class="text-muted">Advertisement</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Tools -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="h5 mb-0">Related Tools</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <a href="scientific-calculator.html" class="text-decoration-none">
+                                    <i class="fas fa-calculator me-2"></i>Scientific Calculator
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="unit-converter.html" class="text-decoration-none">
+                                    <i class="fas fa-exchange-alt me-2"></i>Unit Converter
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="graph-plotter.html" class="text-decoration-none">
+                                    <i class="fas fa-chart-line me-2"></i>Graph Plotter
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded here -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="../js/loadComponents.js"></script>
+    <script>
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', () => {
+            const tooltips = document.querySelectorAll('[title]');
+            tooltips.forEach(el => {
+                new bootstrap.Tooltip(el);
+            });
+        });
+
+        // Sample data sets
+        const sampleData = {
+            normal: [23, 25, 26, 28, 29, 30, 31, 32, 33, 35],
+            bimodal: [10, 11, 12, 25, 26, 27, 28, 40, 41, 42]
+        };
+
+        // Load sample data
+        function loadSampleData(type) {
+            document.getElementById('dataInput').value = sampleData[type].join('\n');
+            calculateStatistics();
+        }
+
+        // Parse input data with validation
+        function parseData(input) {
+            return input
+                .split(/[\n,]+/)
+                .map(x => x.trim())
+                .filter(x => x && !isNaN(x))
+                .map(x => {
+                    const num = Number(x);
+                    if (!isFinite(num)) throw new Error('Invalid number detected');
+                    return num;
+                });
+        }
+
+        // Calculate basic statistics
+        function calculateStatistics() {
+            try {
+                const data = parseData(document.getElementById('dataInput').value);
+                if (data.length === 0) {
+                    showError('Please enter valid numerical data');
+                    return;
+                }
+                if (data.length > 10000) {
+                    showError('Too many data points. Please limit to 10,000 values for performance.');
+                    return;
+                }
+
+                // Sort data
+                const sortedData = [...data].sort((a, b) => a - b);
+
+                // Basic calculations
+                const count = data.length;
+                const sum = data.reduce((a, b) => a + b, 0);
+                const mean = sum / count;
+                const median = count % 2 === 0 
+                    ? (sortedData[count/2 - 1] + sortedData[count/2]) / 2 
+                    : sortedData[Math.floor(count/2)];
+                
+                // Mode calculation with validation
+                const frequency = {};
+                let maxFreq = 0;
+                let mode = [];
+                data.forEach(num => {
+                    frequency[num] = (frequency[num] || 0) + 1;
+                    if (frequency[num] > maxFreq) {
+                        maxFreq = frequency[num];
+                        mode = [num];
+                    } else if (frequency[num] === maxFreq) {
+                        mode.push(num);
+                    }
+                });
+
+                // Standard deviation and variance with validation
+                const variance = data.reduce((a, b) => {
+                    const diff = b - mean;
+                    if (!isFinite(diff)) throw new Error('Calculation overflow');
+                    return a + Math.pow(diff, 2);
+                }, 0) / count;
+                
+                if (!isFinite(variance)) throw new Error('Variance calculation overflow');
+                const stdDev = Math.sqrt(variance);
+
+                // Update results with validation
+                updateResults({
+                    count,
+                    mean,
+                    median,
+                    mode,
+                    stdDev,
+                    variance,
+                    range: sortedData[count - 1] - sortedData[0],
+                    sum
+                });
+
+                // Calculate and update advanced statistics
+                if (stdDev !== 0) {
+                    const skewness = calculateSkewness(data, mean, stdDev);
+                    const kurtosis = calculateKurtosis(data, mean, stdDev);
+                    document.getElementById('skewness').textContent = isFinite(skewness) ? skewness.toFixed(2) : 'N/A';
+                    document.getElementById('kurtosis').textContent = isFinite(kurtosis) ? kurtosis.toFixed(2) : 'N/A';
+                } else {
+                    document.getElementById('skewness').textContent = 'N/A';
+                    document.getElementById('kurtosis').textContent = 'N/A';
+                }
+
+                // Update distribution chart
+                updateDistributionChart(data);
+                
+                // Clear any previous errors
+                clearError();
+            } catch (error) {
+                showError('Error calculating statistics: ' + error.message);
+            }
+        }
+
+        // Update results with validation
+        function updateResults(stats) {
+            const format = (value) => isFinite(value) ? value.toFixed(2) : 'N/A';
+            
+            document.getElementById('count').textContent = stats.count;
+            document.getElementById('mean').textContent = format(stats.mean);
+            document.getElementById('median').textContent = format(stats.median);
+            document.getElementById('mode').textContent = stats.mode.length === 1 ? 
+                format(stats.mode[0]) : 
+                stats.mode.map(x => format(x)).join(', ');
+            document.getElementById('stdDev').textContent = format(stats.stdDev);
+            document.getElementById('variance').textContent = format(stats.variance);
+            document.getElementById('range').textContent = format(stats.range);
+            document.getElementById('sum').textContent = format(stats.sum);
+        }
+
+        // Error handling functions
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage') || createErrorDiv();
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function clearError() {
+            const errorDiv = document.getElementById('errorMessage');
+            if (errorDiv) errorDiv.style.display = 'none';
+        }
+
+        function createErrorDiv() {
+            const div = document.createElement('div');
+            div.id = 'errorMessage';
+            div.className = 'alert alert-danger mt-3';
+            div.style.display = 'none';
+            document.querySelector('.card-body').insertBefore(
+                div,
+                document.querySelector('.card-body').firstChild
+            );
+            return div;
+        }
+
+        // Calculate skewness with validation
+        function calculateSkewness(data, mean, stdDev) {
+            try {
+                const n = data.length;
+                const m3 = data.reduce((a, b) => {
+                    const diff = b - mean;
+                    if (!isFinite(diff)) throw new Error('Calculation overflow');
+                    return a + Math.pow(diff, 3);
+                }, 0) / n;
+                return m3 / Math.pow(stdDev, 3);
+            } catch (error) {
+                console.error('Skewness calculation error:', error);
+                return NaN;
+            }
+        }
+
+        // Calculate kurtosis with validation
+        function calculateKurtosis(data, mean, stdDev) {
+            try {
+                const n = data.length;
+                const m4 = data.reduce((a, b) => {
+                    const diff = b - mean;
+                    if (!isFinite(diff)) throw new Error('Calculation overflow');
+                    return a + Math.pow(diff, 4);
+                }, 0) / n;
+                return m4 / Math.pow(stdDev, 4) - 3;
+            } catch (error) {
+                console.error('Kurtosis calculation error:', error);
+                return NaN;
+            }
+        }
+
+        // Update distribution chart with validation
+        function updateDistributionChart(data) {
+            try {
+                const ctx = document.getElementById('distributionChart');
+                
+                // Destroy existing chart if it exists
+                if (distributionChart) {
+                    distributionChart.destroy();
+                }
+
+                // Validate data size for reasonable binning
+                const binCount = Math.min(Math.ceil(Math.sqrt(data.length)), 20);
+                if (binCount < 2) {
+                    throw new Error('Not enough data points for distribution chart');
+                }
+
+                // Create histogram data
+                const min = Math.min(...data);
+                const max = Math.max(...data);
+                const binWidth = (max - min) / binCount;
+                const bins = Array(binCount).fill(0);
+
+                // Validate bin width
+                if (binWidth === 0) {
+                    throw new Error('All values are identical');
+                }
+
+                data.forEach(value => {
+                    const binIndex = Math.min(Math.floor((value - min) / binWidth), binCount - 1);
+                    bins[binIndex]++;
+                });
+
+                const labels = Array(binCount).fill(0).map((_, i) => 
+                    `${(min + i * binWidth).toFixed(1)} - ${(min + (i + 1) * binWidth).toFixed(1)}`
+                );
+
+                distributionChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Frequency',
+                            data: bins,
+                            backgroundColor: 'rgba(13, 110, 253, 0.5)',
+                            borderColor: 'rgba(13, 110, 253, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Frequency'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Value Ranges'
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Chart creation error:', error);
+                showError('Could not create distribution chart: ' + error.message);
+            }
+        }
+
+        // Calculate Z-Score
+        function calculateZScore() {
+            const data = parseData(document.getElementById('dataInput').value);
+            const value = parseFloat(document.getElementById('zScoreInput').value);
+            
+            if (isNaN(value) || data.length === 0) {
+                alert('Please enter valid numerical data and value');
+                return;
+            }
+
+            const mean = data.reduce((a, b) => a + b, 0) / data.length;
+            const stdDev = Math.sqrt(data.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / data.length);
+            const zScore = (value - mean) / stdDev;
+
+            document.getElementById('zScoreResult').innerHTML = `
+                <div class="alert alert-info">
+                    Z-Score: ${zScore.toFixed(2)}<br>
+                    This value is ${Math.abs(zScore).toFixed(2)} standard deviations ${zScore > 0 ? 'above' : 'below'} the mean
+                </div>
+            `;
+        }
+
+        // Calculate Percentile
+        function calculatePercentile() {
+            const data = parseData(document.getElementById('dataInput').value);
+            const value = parseFloat(document.getElementById('percentileInput').value);
+            
+            if (isNaN(value) || data.length === 0) {
+                alert('Please enter valid numerical data and value');
+                return;
+            }
+
+            const sortedData = [...data].sort((a, b) => a - b);
+            const count = data.length;
+            let percentile = 0;
+
+            for (let i = 0; i < count; i++) {
+                if (sortedData[i] <= value) {
+                    percentile = ((i + 1) / count) * 100;
+                }
+            }
+
+            document.getElementById('percentileResult').innerHTML = `
+                <div class="alert alert-info">
+                    Percentile: ${percentile.toFixed(1)}%<br>
+                    ${percentile.toFixed(1)}% of the data falls at or below this value
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html> 

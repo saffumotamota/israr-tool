@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Formatter & Validator | Format, Validate & Beautify JSON Online - Multi-Tools</title>
+    <meta name="description" content="Free online JSON formatter and validator. Format, validate, and beautify JSON data with syntax highlighting.">
+    <meta name="keywords" content="json formatter, json validator, json beautifier, json parser, code formatter">
+    <meta name="author" content="Israr Ahmed">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="JSON Formatter & Validator | Format & Beautify JSON Online">
+    <meta property="og:description" content="Free online JSON formatter and validator. Format, validate, and beautify your JSON data with custom indentation. Perfect for developers.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://multi-tools.com/tools/json-formatter.html">
+    <meta property="og:image" content="https://multi-tools.com/images/json-formatter-preview.jpg">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="JSON Formatter & Validator | Developer Tools">
+    <meta name="twitter:description" content="Format, validate, and beautify your JSON data online. Free JSON formatter with syntax highlighting and error detection.">
+    <meta name="twitter:image" content="https://multi-tools.com/images/json-formatter-preview.jpg">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://multi-tools.com/tools/json-formatter.html">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-okaidia.min.css" rel="stylesheet">
+    <style>
+        .editor-height {
+            min-height: 400px;
+        }
+        #jsonInput {
+            font-family: monospace;
+            resize: vertical;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "JSON Formatter & Validator",
+        "url": "https://multi-tools.com/tools/json-formatter.html",
+        "description": "Free online JSON formatter, validator and beautifier. Format JSON with custom indentation, validate syntax, and beautify JSON data.",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "JSON formatting with custom indentation",
+            "JSON syntax validation",
+            "JSON beautification",
+            "JSON minification",
+            "Syntax highlighting",
+            "Error detection and highlighting",
+            "Copy to clipboard functionality",
+            "Download formatted JSON"
+        ],
+        "screenshot": "https://multi-tools.com/images/json-formatter-preview.jpg",
+        "creator": {
+            "@type": "Organization",
+            "name": "Multi-Tools"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- Header will be loaded here -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        <div class="row">
+            <!-- Tool Section -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h4 mb-0">JSON Formatter & Validator</h1>
+                    </div>
+                    <div class="card-body">
+                        <!-- Tool Description -->
+                        <div class="mb-4">
+                            <p class="lead">Format, validate, and beautify your JSON data with this free online tool. Features syntax highlighting, error detection, and custom indentation options.</p>
+                        </div>
+
+                        <!-- Input Section -->
+                        <div class="mb-3">
+                            <label for="jsonInput" class="form-label">Input JSON</label>
+                            <textarea class="form-control editor-height" id="jsonInput" 
+                                placeholder="Paste your JSON here..."></textarea>
+                            <div id="errorMessage" class="error-message d-none"></div>
+                        </div>
+
+                        <!-- Options -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="indentSize" class="form-label">Indent Size</label>
+                                <select class="form-select" id="indentSize">
+                                    <option value="2">2 spaces</option>
+                                    <option value="4">4 spaces</option>
+                                    <option value="tab">Tab</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sortKeys" class="form-label">Sort Keys</label>
+                                <select class="form-select" id="sortKeys">
+                                    <option value="no">No sorting</option>
+                                    <option value="asc">Ascending</option>
+                                    <option value="desc">Descending</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="text-center mb-4">
+                            <button class="btn btn-primary me-2" id="formatBtn">
+                                <i class="fas fa-code me-2"></i>Format JSON
+                            </button>
+                            <button class="btn btn-success me-2" id="validateBtn">
+                                <i class="fas fa-check me-2"></i>Validate
+                            </button>
+                            <button class="btn btn-secondary me-2" id="minifyBtn">
+                                <i class="fas fa-compress-alt me-2"></i>Minify
+                            </button>
+                            <button class="btn btn-info" id="copyBtn">
+                                <i class="fas fa-copy me-2"></i>Copy
+                            </button>
+                        </div>
+
+                        <!-- Output Section -->
+                        <div id="outputSection" class="d-none">
+                            <h5>Formatted Output</h5>
+                            <pre class="line-numbers"><code class="language-json" id="jsonOutput"></code></pre>
+                        </div>
+
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Note:</strong> All JSON processing is done locally in your browser for data privacy.
+                        </div>
+
+                        <div class="mt-4 text-muted small">
+                            <p>© 2024 Developed by Israr Ahmed. All rights reserved.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool Description -->
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5">About JSON Formatter</h2>
+                        <p>Format, validate, and beautify your JSON data with this free online tool. Perfect for developers working with JSON data, API responses, or configuration files.</p>
+                        
+                        <h3 class="h5 mt-4">Features:</h3>
+                        <ul>
+                            <li>Format JSON with customizable indentation</li>
+                            <li>Validate JSON syntax</li>
+                            <li>Sort object keys alphabetically</li>
+                            <li>Minify JSON by removing whitespace</li>
+                            <li>Syntax highlighting</li>
+                            <li>Process data locally - no server uploads</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Ad Section -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="ad-banner">
+                            <p class="text-muted">Advertisement</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Tools -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="h5 mb-0">Related Tools</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <a href="xml-formatter.html" class="text-decoration-none">
+                                    <i class="fas fa-code me-2"></i>XML Formatter
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="html-formatter.html" class="text-decoration-none">
+                                    <i class="fas fa-code me-2"></i>HTML Formatter
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="css-minifier.html" class="text-decoration-none">
+                                    <i class="fas fa-compress-alt me-2"></i>CSS Minifier
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded here -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-json.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="../js/loadComponents.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const jsonInput = document.getElementById('jsonInput');
+            const jsonOutput = document.getElementById('jsonOutput');
+            const outputSection = document.getElementById('outputSection');
+            const errorMessage = document.getElementById('errorMessage');
+            const indentSize = document.getElementById('indentSize');
+            const sortKeys = document.getElementById('sortKeys');
+            const formatBtn = document.getElementById('formatBtn');
+            const validateBtn = document.getElementById('validateBtn');
+            const minifyBtn = document.getElementById('minifyBtn');
+            const copyBtn = document.getElementById('copyBtn');
+
+            // Format JSON
+            formatBtn.addEventListener('click', () => {
+                try {
+                    const json = JSON.parse(jsonInput.value);
+                    const formatted = formatJSON(json);
+                    displayOutput(formatted);
+                    hideError();
+                } catch (e) {
+                    showError(e.message);
+                }
+            });
+
+            // Validate JSON
+            validateBtn.addEventListener('click', () => {
+                try {
+                    JSON.parse(jsonInput.value);
+                    showError('JSON is valid!', 'text-success');
+                } catch (e) {
+                    showError(e.message);
+                }
+            });
+
+            // Minify JSON
+            minifyBtn.addEventListener('click', () => {
+                try {
+                    const json = JSON.parse(jsonInput.value);
+                    const minified = JSON.stringify(json);
+                    displayOutput(minified);
+                    hideError();
+                } catch (e) {
+                    showError(e.message);
+                }
+            });
+
+            // Copy to clipboard
+            copyBtn.addEventListener('click', () => {
+                const textToCopy = jsonOutput.textContent || jsonInput.value;
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
+                        setTimeout(() => {
+                            copyBtn.innerHTML = '<i class="fas fa-copy me-2"></i>Copy';
+                        }, 2000);
+                    });
+            });
+
+            function formatJSON(json) {
+                const indent = indentSize.value === 'tab' ? '\t' : ' '.repeat(parseInt(indentSize.value));
+                
+                if (sortKeys.value !== 'no') {
+                    json = sortObjectKeys(json, sortKeys.value === 'asc');
+                }
+                
+                return JSON.stringify(json, null, indent);
+            }
+
+            function sortObjectKeys(obj, ascending = true) {
+                if (typeof obj !== 'object' || obj === null) return obj;
+                
+                if (Array.isArray(obj)) {
+                    return obj.map(item => sortObjectKeys(item, ascending));
+                }
+
+                const sorted = {};
+                const keys = Object.keys(obj).sort((a, b) => {
+                    return ascending ? a.localeCompare(b) : b.localeCompare(a);
+                });
+
+                keys.forEach(key => {
+                    sorted[key] = sortObjectKeys(obj[key], ascending);
+                });
+
+                return sorted;
+            }
+
+            function displayOutput(json) {
+                jsonOutput.textContent = json;
+                outputSection.classList.remove('d-none');
+                Prism.highlightElement(jsonOutput);
+            }
+
+            function showError(message, className = 'text-danger') {
+                errorMessage.textContent = message;
+                errorMessage.className = `error-message ${className}`;
+                errorMessage.classList.remove('d-none');
+            }
+
+            function hideError() {
+                errorMessage.classList.add('d-none');
+            }
+        });
+    </script>
+</body>
+</html> 
