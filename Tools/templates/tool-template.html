@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{TOOL_NAME} | {ACTION_PHRASE} - Multi-Tools</title>
+    <meta name="description" content="{TOOL_DESCRIPTION} Free online tool for {MAIN_KEYWORD}. {FEATURES_SUMMARY}">
+    <meta name="keywords" content="{COMMA_SEPARATED_KEYWORDS}">
+    <meta name="author" content="Multi-Tools">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="{TOOL_NAME} | {ACTION_PHRASE}">
+    <meta property="og:description" content="{TOOL_DESCRIPTION}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://multi-tools.com/tools/{TOOL_URL}">
+    <meta property="og:image" content="https://multi-tools.com/images/{TOOL_IMAGE}">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{TOOL_NAME} | {ACTION_PHRASE}">
+    <meta name="twitter:description" content="{TOOL_DESCRIPTION}">
+    <meta name="twitter:image" content="https://multi-tools.com/images/{TOOL_IMAGE}">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://multi-tools.com/tools/{TOOL_URL}">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "{TOOL_NAME}",
+        "url": "https://multi-tools.com/tools/{TOOL_URL}",
+        "description": "{TOOL_DESCRIPTION}",
+        "applicationCategory": "{TOOL_CATEGORY}Application",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            {FEATURE_LIST_JSON}
+        ],
+        "screenshot": "https://multi-tools.com/images/{TOOL_IMAGE}",
+        "creator": {
+            "@type": "Organization",
+            "name": "Multi-Tools"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- Header will be loaded here -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        <div class="row">
+            <!-- Tool Section -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h4 mb-0">{TOOL_NAME}</h1>
+                    </div>
+                    <div class="card-body">
+                        <!-- Tool Description -->
+                        <div class="mb-4">
+                            <p class="lead">{TOOL_LEAD_DESCRIPTION}</p>
+                        </div>
+                        
+                        <!-- Tool Content -->
+                        {TOOL_CONTENT}
+                    </div>
+                </div>
+
+                <!-- Tool Description -->
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5">About {TOOL_NAME}</h2>
+                        <p>{TOOL_ABOUT_DESCRIPTION}</p>
+                        
+                        <h3 class="h5 mt-4">Features:</h3>
+                        <ul>
+                            {FEATURE_LIST_HTML}
+                        </ul>
+
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            <strong>Tip:</strong> {TOOL_TIP}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Ad Section -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="ad-banner">
+                            <p class="text-muted">Advertisement</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Tools -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="h5 mb-0">Related Tools</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            {RELATED_TOOLS_LIST}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded here -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="../js/loadComponents.js"></script>
+    {TOOL_SPECIFIC_SCRIPTS}
+</body>
+</html> 

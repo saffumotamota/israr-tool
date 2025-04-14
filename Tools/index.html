@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Tools - Free Online Tools</title>
+    <meta name="description" content="Collection of free online tools for developers, designers, and everyday users. Convert, generate, calculate, and more.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header will be loaded here -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        <!-- Search Section -->
+        <section class="search-section text-white text-center">
+            <h1 class="display-4 mb-4">Free Online Tools</h1>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search tools...">
+                        <button class="btn btn-light" type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tools Grid -->
+        <section class="tools-section">
+            <!-- Developer Tools -->
+            <h2 class="h4 mb-4">Developer Tools</h2>
+            <div class="row mb-5">
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card" 
+                         data-tool-id="json-formatter"
+                         data-tool-name="JSON Formatter"
+                         data-tool-icon="fas fa-code"
+                         data-tool-url="tools/json-formatter.html">
+                        <div class="card-body">
+                            <h3 class="h5 mb-3">
+                                <i class="fas fa-code me-2"></i>
+                                JSON Formatter
+                            </h3>
+                            <p class="card-text">Format, validate, and beautify JSON data with syntax highlighting.</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="tools/json-formatter.html" class="btn btn-primary btn-sm">Open Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card"
+                         data-tool-id="url-encoder"
+                         data-tool-name="URL Encoder"
+                         data-tool-icon="fas fa-link"
+                         data-tool-url="tools/url-encoder.html">
+                        <div class="card-body">
+                            <h3 class="h5 mb-3">
+                                <i class="fas fa-link me-2"></i>
+                                URL Encoder
+                            </h3>
+                            <p class="card-text">Encode and decode URLs, analyze query parameters and components.</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="tools/url-encoder.html" class="btn btn-primary btn-sm">Open Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card"
+                         data-tool-id="base64-encoder"
+                         data-tool-name="Base64 Encoder"
+                         data-tool-icon="fas fa-exchange-alt"
+                         data-tool-url="tools/base64-encoder.html">
+                        <div class="card-body">
+                            <h3 class="h5 mb-3">
+                                <i class="fas fa-exchange-alt me-2"></i>
+                                Base64 Encoder
+                            </h3>
+                            <p class="card-text">Convert text and files to and from Base64 encoding.</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="tools/base64-encoder.html" class="btn btn-primary btn-sm">Open Tool</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text Tools -->
+            <h2 class="h4 mb-4">Text Tools</h2>
+            <div class="row mb-5">
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card"
+                         data-tool-id="text-case-converter"
+                         data-tool-name="Text Case Converter"
+                         data-tool-icon="fas fa-font"
+                         data-tool-url="tools/text-case-converter.html">
+                        <div class="card-body">
+                            <h3 class="h5 mb-3">
+                                <i class="fas fa-font me-2"></i>
+                                Text Case Converter
+                            </h3>
+                            <p class="card-text">Convert text between different cases: upper, lower, title, etc.</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="tools/text-case-converter.html" class="btn btn-primary btn-sm">Open Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card"
+                         data-tool-id="word-counter"
+                         data-tool-name="Word Counter"
+                         data-tool-icon="fas fa-calculator"
+                         data-tool-url="tools/word-counter.html">
+                        <div class="card-body">
+                            <h3 class="h5 mb-3">
+                                <i class="fas fa-calculator me-2"></i>
+                                Word Counter
+                            </h3>
+                            <p class="card-text">Count words, characters, sentences, and paragraphs in your text.</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="tools/word-counter.html" class="btn btn-primary btn-sm">Open Tool</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Tools -->
+            <h2 class="h4 mb-4">Security Tools</h2>
+            <div class="row mb-5">
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card"
+                         data-tool-id="password-generator"
+                         data-tool-name="Password Generator"
+                         data-tool-icon="fas fa-key"
+                         data-tool-url="tools/password-generator.html">
+                        <div class="card-body">
+                            <h3 class="h5 mb-3">
+                                <i class="fas fa-key me-2"></i>
+                                Password Generator
+                            </h3>
+                            <p class="card-text">Generate secure, random passwords with customizable options.</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="tools/password-generator.html" class="btn btn-primary btn-sm">Open Tool</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Tools -->
+            <h2 class="h4 mb-4">Image Tools</h2>
+            <div class="row mb-5">
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card"
+                         data-tool-id="image-to-png"
+                         data-tool-name="Image to PNG"
+                         data-tool-icon="fas fa-image"
+                         data-tool-url="tools/image-to-png.html">
+                        <div class="card-body">
+                            <h3 class="h5 mb-3">
+                                <i class="fas fa-image me-2"></i>
+                                Image to PNG
+                            </h3>
+                            <p class="card-text">Convert images to PNG format with preview and size optimization.</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="tools/image-to-png.html" class="btn btn-primary btn-sm">Open Tool</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card tool-card"
+                         data-tool-id="qr-generator"
+                         data-tool-name="QR Code Generator"
+                         data-tool-icon="fas fa-qrcode"
+                         data-tool-url="tools/qr-code-generator.html">
+                        <div class="card-body">
+                            <h3 class="h5 mb-3">
+                                <i class="fas fa-qrcode me-2"></i>
+                                QR Code Generator
+                            </h3>
+                            <p class="card-text">Generate QR codes for text, URLs, and contact information.</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="tools/qr-code-generator.html" class="btn btn-primary btn-sm">Open Tool</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer will be loaded here -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="js/loadComponents.js"></script>
+    <script src="js/favorites.js"></script>
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.tool-card').forEach(card => {
+                const toolName = card.querySelector('.h5').textContent.toLowerCase();
+                const toolDesc = card.querySelector('.card-text').textContent.toLowerCase();
+                const isVisible = toolName.includes(searchTerm) || toolDesc.includes(searchTerm);
+                card.closest('.col-md-4').style.display = isVisible ? 'block' : 'none';
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter - Multi-Tools</title>
+    <meta name="description" content="Count words, characters, sentences, and paragraphs. Get detailed text statistics and readability scores.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .stats-card {
+            transition: transform 0.2s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-2px);
+        }
+        .stats-icon {
+            font-size: 2rem;
+            color: #0d6efd;
+            margin-bottom: 0.5rem;
+        }
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #212529;
+        }
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        .keyword-tag {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            margin: 0.25rem;
+            background-color: #e9ecef;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+        }
+        .readability-meter {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e9ecef;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        .readability-level {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .level-easy { background-color: #28a745; }
+        .level-medium { background-color: #ffc107; }
+        .level-hard { background-color: #dc3545; }
+        #textInput {
+            resize: vertical;
+            min-height: 200px;
+        }
+        .char-count {
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.5rem;
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded here -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        <div class="row">
+            <!-- Tool Section -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h4 mb-0">Word Counter</h1>
+                    </div>
+                    <div class="card-body">
+                        <!-- Text Input -->
+                        <div class="position-relative mb-4">
+                            <label for="textInput" class="form-label">Enter or paste your text</label>
+                            <textarea class="form-control" id="textInput" rows="10" placeholder="Type or paste your text here..."></textarea>
+                            <div class="char-count">0/5000</div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="btn-group mb-4" role="group">
+                            <button type="button" class="btn btn-outline-secondary" id="clearBtn">
+                                <i class="fas fa-eraser me-2"></i>Clear
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="copyBtn">
+                                <i class="fas fa-copy me-2"></i>Copy
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="downloadBtn">
+                                <i class="fas fa-download me-2"></i>Download
+                            </button>
+                        </div>
+
+                        <!-- Statistics Cards -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-3 col-6">
+                                <div class="card stats-card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-font stats-icon"></i>
+                                        <div class="stat-value" id="wordCount">0</div>
+                                        <div class="stat-label">Words</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="card stats-card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-text-width stats-icon"></i>
+                                        <div class="stat-value" id="charCount">0</div>
+                                        <div class="stat-label">Characters</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="card stats-card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-paragraph stats-icon"></i>
+                                        <div class="stat-value" id="paragraphCount">0</div>
+                                        <div class="stat-label">Paragraphs</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <div class="card stats-card h-100">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-align-left stats-icon"></i>
+                                        <div class="stat-value" id="sentenceCount">0</div>
+                                        <div class="stat-label">Sentences</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Analysis -->
+                        <div class="row">
+                            <!-- Reading Time -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">Reading Time</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fas fa-book-reader me-2"></i>
+                                            <span id="readingTime">0 minutes</span>
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-microphone me-2"></i>
+                                            <span id="speakingTime">0 minutes</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Readability -->
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">Readability</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="readabilityScore">Grade Level: -</div>
+                                        <div class="readability-meter">
+                                            <div class="readability-level" id="readabilityMeter"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Keyword Analysis -->
+                            <div class="col-12 mb-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">Top Keywords</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="keywordCloud"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool Description -->
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5">About Word Counter</h2>
+                        <p>A comprehensive text analysis tool that provides detailed statistics about your text, including word count, character count, readability metrics, and keyword analysis.</p>
+                        
+                        <h3 class="h5 mt-4">Features:</h3>
+                        <ul>
+                            <li>Word, character, sentence, and paragraph counting</li>
+                            <li>Reading time estimation</li>
+                            <li>Readability scoring</li>
+                            <li>Keyword frequency analysis</li>
+                            <li>Text statistics and metrics</li>
+                            <li>Copy and download functionality</li>
+                        </ul>
+
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Tip:</strong> Use the readability score to ensure your text is appropriate for your target audience.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Ad Section -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="ad-banner">
+                            <p class="text-muted">Advertisement</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Tools -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="h5 mb-0">Related Tools</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <a href="text-case-converter.html" class="text-decoration-none">
+                                    <i class="fas fa-text-height me-2"></i>Text Case Converter
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="lorem-ipsum-generator.html" class="text-decoration-none">
+                                    <i class="fas fa-paragraph me-2"></i>Lorem Ipsum Generator
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="text-diff-checker.html" class="text-decoration-none">
+                                    <i class="fas fa-code-branch me-2"></i>Text Diff Checker
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded here -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="../js/loadComponents.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const textInput = document.getElementById('textInput');
+            const clearBtn = document.getElementById('clearBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            // Stats elements
+            const wordCount = document.getElementById('wordCount');
+            const charCount = document.getElementById('charCount');
+            const paragraphCount = document.getElementById('paragraphCount');
+            const sentenceCount = document.getElementById('sentenceCount');
+            const readingTime = document.getElementById('readingTime');
+            const speakingTime = document.getElementById('speakingTime');
+            const readabilityScore = document.getElementById('readabilityScore');
+            const readabilityMeter = document.getElementById('readabilityMeter');
+            const keywordCloud = document.getElementById('keywordCloud');
+            
+            // Update all stats
+            function updateStats() {
+                const text = textInput.value;
+                
+                // Basic counts
+                const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+                const chars = text.length;
+                const paragraphs = text.split(/\n\s*\n/).filter(para => para.trim().length > 0);
+                const sentences = text.split(/[.!?]+/).filter(sent => sent.trim().length > 0);
+                
+                // Update display
+                wordCount.textContent = words.length;
+                charCount.textContent = chars;
+                paragraphCount.textContent = paragraphs.length;
+                sentenceCount.textContent = sentences.length;
+                
+                // Reading time (average 200-250 words per minute)
+                const readMinutes = Math.ceil(words.length / 225);
+                const speakMinutes = Math.ceil(words.length / 150);
+                readingTime.textContent = `${readMinutes} minute${readMinutes !== 1 ? 's' : ''} to read`;
+                speakingTime.textContent = `${speakMinutes} minute${speakMinutes !== 1 ? 's' : ''} to speak`;
+                
+                // Readability (simplified Flesch-Kincaid)
+                if (words.length > 0 && sentences.length > 0) {
+                    const wordsPerSentence = words.length / sentences.length;
+                    const syllables = words.reduce((count, word) => {
+                        return count + word.split(/[aeiou]/i).length - 1;
+                    }, 0);
+                    const syllablesPerWord = syllables / words.length;
+                    
+                    const score = 206.835 - (1.015 * wordsPerSentence) - (84.6 * syllablesPerWord);
+                    let level = '';
+                    let width = '';
+                    let className = '';
+                    
+                    if (score > 80) {
+                        level = 'Easy';
+                        width = '33%';
+                        className = 'level-easy';
+                    } else if (score > 60) {
+                        level = 'Medium';
+                        width = '66%';
+                        className = 'level-medium';
+                    } else {
+                        level = 'Hard';
+                        width = '100%';
+                        className = 'level-hard';
+                    }
+                    
+                    readabilityScore.textContent = `Reading Level: ${level}`;
+                    readabilityMeter.className = `readability-level ${className}`;
+                    readabilityMeter.style.width = width;
+                }
+                
+                // Keyword analysis
+                const keywords = {};
+                words.forEach(word => {
+                    word = word.toLowerCase().replace(/[^a-z]/g, '');
+                    if (word.length > 3) {
+                        keywords[word] = (keywords[word] || 0) + 1;
+                    }
+                });
+                
+                // Sort keywords by frequency
+                const sortedKeywords = Object.entries(keywords)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 10);
+                
+                // Display keywords
+                keywordCloud.innerHTML = sortedKeywords
+                    .map(([word, freq]) => `<span class="keyword-tag">${word} (${freq})</span>`)
+                    .join('');
+                
+                // Update character limit counter
+                document.querySelector('.char-count').textContent = `${chars}/5000`;
+            }
+            
+            // Event listeners
+            textInput.addEventListener('input', updateStats);
+            
+            clearBtn.addEventListener('click', () => {
+                textInput.value = '';
+                updateStats();
+            });
+            
+            copyBtn.addEventListener('click', () => {
+                textInput.select();
+                document.execCommand('copy');
+            });
+            
+            downloadBtn.addEventListener('click', () => {
+                const text = textInput.value;
+                const blob = new Blob([text], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'text.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+            
+            // Character limit
+            textInput.addEventListener('input', function() {
+                if (this.value.length > 5000) {
+                    this.value = this.value.substring(0, 5000);
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

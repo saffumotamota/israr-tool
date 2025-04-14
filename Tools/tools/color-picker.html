@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Picker & Converter - Multi-Tools</title>
+    <meta name="description" content="Pick colors, convert between formats (HEX, RGB, HSL), generate color palettes, and explore color harmonies.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .color-preview {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .color-input {
+            font-family: monospace;
+        }
+        .color-format {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .color-swatch {
+            width: 100%;
+            height: 100px;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .color-swatch:hover {
+            transform: translateY(-2px);
+        }
+        .harmony-preview {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .harmony-color {
+            flex: 1;
+            height: 80px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .harmony-color:hover {
+            transform: translateY(-2px);
+        }
+        .color-value {
+            font-size: 0.875rem;
+            color: #6c757d;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .color-format:hover .copy-btn {
+            opacity: 1;
+        }
+        .saved-colors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .saved-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .saved-color:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded here -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        <div class="row">
+            <!-- Tool Section -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h4 mb-0">Color Picker & Converter</h1>
+                    </div>
+                    <div class="card-body">
+                        <!-- Color Preview -->
+                        <div class="color-preview" id="colorPreview"></div>
+
+                        <!-- Color Picker -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="colorPicker" class="form-label">Pick a Color</label>
+                                <input type="color" class="form-control form-control-color w-100" id="colorPicker" value="#4287f5">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="colorInput" class="form-label">Enter Color Code</label>
+                                <input type="text" class="form-control color-input" id="colorInput" placeholder="#4287f5">
+                            </div>
+                        </div>
+
+                        <!-- Color Formats -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="color-format position-relative">
+                                    <h6>HEX</h6>
+                                    <div id="hexValue" class="color-input">#4287f5</div>
+                                    <button class="btn btn-sm btn-light copy-btn" data-format="hex">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="color-format position-relative">
+                                    <h6>RGB</h6>
+                                    <div id="rgbValue" class="color-input">rgb(66, 135, 245)</div>
+                                    <button class="btn btn-sm btn-light copy-btn" data-format="rgb">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="color-format position-relative">
+                                    <h6>HSL</h6>
+                                    <div id="hslValue" class="color-input">hsl(217, 89%, 61%)</div>
+                                    <button class="btn btn-sm btn-light copy-btn" data-format="hsl">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Color Harmonies -->
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Color Harmonies</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="btn-group mb-3" role="group">
+                                    <button type="button" class="btn btn-outline-primary active" data-harmony="complementary">
+                                        Complementary
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" data-harmony="analogous">
+                                        Analogous
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" data-harmony="triadic">
+                                        Triadic
+                                    </button>
+                                </div>
+                                <div class="harmony-preview" id="harmonyPreview"></div>
+                            </div>
+                        </div>
+
+                        <!-- Saved Colors -->
+                        <div class="card mt-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Saved Colors</h5>
+                                <button class="btn btn-sm btn-primary" id="saveColorBtn">
+                                    <i class="fas fa-plus me-1"></i>Save Current
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="saved-colors" id="savedColors"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool Description -->
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5">About Color Picker & Converter</h2>
+                        <p>A comprehensive color tool that helps you pick colors, convert between different formats, generate color harmonies, and create color palettes for your projects.</p>
+                        
+                        <h3 class="h5 mt-4">Features:</h3>
+                        <ul>
+                            <li>Visual color picker</li>
+                            <li>Color format conversion (HEX, RGB, HSL)</li>
+                            <li>Color harmony generation</li>
+                            <li>Save and manage color palettes</li>
+                            <li>One-click copy to clipboard</li>
+                            <li>Color code validation</li>
+                        </ul>
+
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Tip:</strong> Click on any color swatch to copy its HEX code to your clipboard.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Ad Section -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="ad-banner">
+                            <p class="text-muted">Advertisement</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Tools -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="h5 mb-0">Related Tools</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <a href="gradient-generator.html" class="text-decoration-none">
+                                    <i class="fas fa-paint-brush me-2"></i>Gradient Generator
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="image-color-picker.html" class="text-decoration-none">
+                                    <i class="fas fa-eye-dropper me-2"></i>Image Color Picker
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="color-contrast-checker.html" class="text-decoration-none">
+                                    <i class="fas fa-adjust me-2"></i>Color Contrast Checker
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded here -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="../js/loadComponents.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const colorPicker = document.getElementById('colorPicker');
+            const colorInput = document.getElementById('colorInput');
+            const colorPreview = document.getElementById('colorPreview');
+            const hexValue = document.getElementById('hexValue');
+            const rgbValue = document.getElementById('rgbValue');
+            const hslValue = document.getElementById('hslValue');
+            const harmonyPreview = document.getElementById('harmonyPreview');
+            const savedColors = document.getElementById('savedColors');
+            const saveColorBtn = document.getElementById('saveColorBtn');
+            
+            // Convert HEX to RGB
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            }
+            
+            // Convert RGB to HSL
+            function rgbToHsl(r, g, b) {
+                r /= 255;
+                g /= 255;
+                b /= 255;
+                
+                const max = Math.max(r, g, b);
+                const min = Math.min(r, g, b);
+                let h, s, l = (max + min) / 2;
+                
+                if (max === min) {
+                    h = s = 0;
+                } else {
+                    const d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    
+                    switch (max) {
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        case b: h = (r - g) / d + 4; break;
+                    }
+                    
+                    h /= 6;
+                }
+                
+                return {
+                    h: Math.round(h * 360),
+                    s: Math.round(s * 100),
+                    l: Math.round(l * 100)
+                };
+            }
+            
+            // Update color values
+            function updateColorValues(hex) {
+                const rgb = hexToRgb(hex);
+                const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+                
+                colorPreview.style.backgroundColor = hex;
+                hexValue.textContent = hex;
+                rgbValue.textContent = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+                hslValue.textContent = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+                
+                updateHarmony(hex);
+            }
+            
+            // Generate color harmonies
+            function updateHarmony(hex) {
+                const rgb = hexToRgb(hex);
+                const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+                const activeHarmony = document.querySelector('.btn-group .active').dataset.harmony;
+                
+                let colors = [];
+                switch (activeHarmony) {
+                    case 'complementary':
+                        colors = [hsl.h, (hsl.h + 180) % 360];
+                        break;
+                    case 'analogous':
+                        colors = [hsl.h, (hsl.h + 30) % 360, (hsl.h + 330) % 360];
+                        break;
+                    case 'triadic':
+                        colors = [hsl.h, (hsl.h + 120) % 360, (hsl.h + 240) % 360];
+                        break;
+                }
+                
+                harmonyPreview.innerHTML = colors.map(h => {
+                    const hexColor = `hsl(${h}, ${hsl.s}%, ${hsl.l}%)`;
+                    return `
+                        <div class="harmony-color" style="background-color: ${hexColor}">
+                            <div class="color-value">${hexColor}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // Event listeners
+            colorPicker.addEventListener('input', (e) => {
+                const hex = e.target.value;
+                colorInput.value = hex;
+                updateColorValues(hex);
+            });
+            
+            colorInput.addEventListener('input', (e) => {
+                let hex = e.target.value;
+                if (hex.match(/^#?([a-f\d]{6})$/i)) {
+                    if (!hex.startsWith('#')) hex = '#' + hex;
+                    colorPicker.value = hex;
+                    updateColorValues(hex);
+                }
+            });
+            
+            // Copy buttons
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const format = btn.dataset.format;
+                    const text = document.getElementById(`${format}Value`).textContent;
+                    navigator.clipboard.writeText(text);
+                    
+                    // Show feedback
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => btn.innerHTML = originalText, 1000);
+                });
+            });
+            
+            // Harmony buttons
+            document.querySelectorAll('[data-harmony]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelector('.btn-group .active').classList.remove('active');
+                    btn.classList.add('active');
+                    updateHarmony(colorPicker.value);
+                });
+            });
+            
+            // Save colors
+            let savedColorsList = JSON.parse(localStorage.getItem('savedColors') || '[]');
+            
+            function updateSavedColors() {
+                savedColors.innerHTML = savedColorsList.map(color => `
+                    <div class="saved-color" style="background-color: ${color}"
+                         title="${color}" data-color="${color}"></div>
+                `).join('');
+            }
+            
+            saveColorBtn.addEventListener('click', () => {
+                const color = colorPicker.value;
+                if (!savedColorsList.includes(color)) {
+                    savedColorsList.push(color);
+                    localStorage.setItem('savedColors', JSON.stringify(savedColorsList));
+                    updateSavedColors();
+                }
+            });
+            
+            savedColors.addEventListener('click', (e) => {
+                if (e.target.classList.contains('saved-color')) {
+                    const color = e.target.dataset.color;
+                    colorPicker.value = color;
+                    colorInput.value = color;
+                    updateColorValues(color);
+                }
+            });
+            
+            // Initial update
+            updateColorValues(colorPicker.value);
+            updateSavedColors();
+        });
+    </script>
+</body>
+</html> 

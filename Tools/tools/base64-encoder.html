@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 Encoder/Decoder - Multi-Tools</title>
+    <meta name="description" content="Encode and decode text, files, and images to/from Base64 format. Features live preview and file handling.">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../css/style.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .encode-decode-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .encode-decode-section {
+            flex: 1;
+        }
+        .preview-container {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .preview-image {
+            max-width: 100%;
+            height: auto;
+        }
+        .drag-drop-zone {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .drag-drop-zone:hover,
+        .drag-drop-zone.dragover {
+            border-color: #0d6efd;
+            background-color: rgba(13, 110, 253, 0.05);
+        }
+        .drag-drop-icon {
+            font-size: 2rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+        .file-info {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .mode-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .mode-btn {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .mode-btn:hover {
+            background-color: #f8f9fa;
+        }
+        .mode-btn.active {
+            background-color: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+        }
+        .mode-btn i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .encode-decode-section:hover .copy-btn {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header will be loaded here -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main class="container py-4">
+        <div class="row">
+            <!-- Tool Section -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h4 mb-0">Base64 Encoder/Decoder</h1>
+                    </div>
+                    <div class="card-body">
+                        <!-- Mode Selector -->
+                        <div class="mode-selector">
+                            <div class="mode-btn active" data-mode="text">
+                                <i class="fas fa-font"></i>
+                                <div>Text</div>
+                            </div>
+                            <div class="mode-btn" data-mode="file">
+                                <i class="fas fa-file"></i>
+                                <div>File</div>
+                            </div>
+                            <div class="mode-btn" data-mode="image">
+                                <i class="fas fa-image"></i>
+                                <div>Image</div>
+                            </div>
+                        </div>
+
+                        <!-- Text Mode -->
+                        <div id="textMode" class="mode-content">
+                            <div class="encode-decode-container">
+                                <!-- Input Section -->
+                                <div class="encode-decode-section position-relative">
+                                    <label for="inputText" class="form-label">Input Text</label>
+                                    <textarea class="form-control" id="inputText" rows="10" placeholder="Enter text to encode/decode..."></textarea>
+                                    <button class="btn btn-sm btn-light copy-btn" data-target="inputText">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+
+                                <!-- Output Section -->
+                                <div class="encode-decode-section position-relative">
+                                    <label for="outputText" class="form-label">Output</label>
+                                    <textarea class="form-control" id="outputText" rows="10" readonly></textarea>
+                                    <button class="btn btn-sm btn-light copy-btn" data-target="outputText">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="btn-group">
+                                <button class="btn btn-primary" id="encodeBtn">
+                                    <i class="fas fa-lock me-2"></i>Encode
+                                </button>
+                                <button class="btn btn-secondary" id="decodeBtn">
+                                    <i class="fas fa-unlock me-2"></i>Decode
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- File Mode -->
+                        <div id="fileMode" class="mode-content d-none">
+                            <div class="drag-drop-zone" id="dropZone">
+                                <i class="fas fa-cloud-upload-alt drag-drop-icon"></i>
+                                <p class="mb-0">Drag & drop a file here or click to select</p>
+                                <input type="file" id="fileInput" class="d-none">
+                            </div>
+                            <div class="file-info" id="fileInfo"></div>
+                            <div class="preview-container d-none" id="filePreview">
+                                <pre class="mb-0"></pre>
+                            </div>
+                        </div>
+
+                        <!-- Image Mode -->
+                        <div id="imageMode" class="mode-content d-none">
+                            <div class="drag-drop-zone" id="imageDropZone">
+                                <i class="fas fa-images drag-drop-icon"></i>
+                                <p class="mb-0">Drag & drop an image here or click to select</p>
+                                <input type="file" id="imageInput" class="d-none" accept="image/*">
+                            </div>
+                            <div class="preview-container d-none" id="imagePreview">
+                                <img class="preview-image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tool Description -->
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h5">About Base64 Encoder/Decoder</h2>
+                        <p>Convert text, files, and images to and from Base64 format. This tool supports multiple encoding modes and provides instant preview functionality.</p>
+                        
+                        <h3 class="h5 mt-4">Features:</h3>
+                        <ul>
+                            <li>Text encoding/decoding</li>
+                            <li>File to Base64 conversion</li>
+                            <li>Image encoding with preview</li>
+                            <li>Drag & drop support</li>
+                            <li>Copy to clipboard</li>
+                            <li>Live preview</li>
+                        </ul>
+
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Tip:</strong> Base64 encoding increases the size of data by approximately 33%. It's commonly used for embedding binary data in text-based formats.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Ad Section -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="ad-banner">
+                            <p class="text-muted">Advertisement</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Tools -->
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="h5 mb-0">Related Tools</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <a href="url-encoder.html" class="text-decoration-none">
+                                    <i class="fas fa-link me-2"></i>URL Encoder/Decoder
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="hash-generator.html" class="text-decoration-none">
+                                    <i class="fas fa-hashtag me-2"></i>Hash Generator
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="json-formatter.html" class="text-decoration-none">
+                                    <i class="fas fa-code me-2"></i>JSON Formatter
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded here -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="../js/loadComponents.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elements
+            const modeBtns = document.querySelectorAll('.mode-btn');
+            const modeContents = document.querySelectorAll('.mode-content');
+            const inputText = document.getElementById('inputText');
+            const outputText = document.getElementById('outputText');
+            const encodeBtn = document.getElementById('encodeBtn');
+            const decodeBtn = document.getElementById('decodeBtn');
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            const fileInfo = document.getElementById('fileInfo');
+            const filePreview = document.getElementById('filePreview');
+            const imageDropZone = document.getElementById('imageDropZone');
+            const imageInput = document.getElementById('imageInput');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            // Mode switching
+            modeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update active state
+                    document.querySelector('.mode-btn.active').classList.remove('active');
+                    btn.classList.add('active');
+                    
+                    // Show corresponding content
+                    const mode = btn.dataset.mode;
+                    modeContents.forEach(content => {
+                        content.classList.add('d-none');
+                        if (content.id === `${mode}Mode`) {
+                            content.classList.remove('d-none');
+                        }
+                    });
+                });
+            });
+            
+            // Text mode functions
+            function encodeText() {
+                try {
+                    const text = inputText.value;
+                    outputText.value = btoa(text);
+                } catch (e) {
+                    outputText.value = 'Error: Invalid input for Base64 encoding';
+                }
+            }
+            
+            function decodeText() {
+                try {
+                    const text = inputText.value;
+                    outputText.value = atob(text);
+                } catch (e) {
+                    outputText.value = 'Error: Invalid Base64 input';
+                }
+            }
+            
+            encodeBtn.addEventListener('click', encodeText);
+            decodeBtn.addEventListener('click', decodeText);
+            
+            // File handling
+            function handleFile(file) {
+                const reader = new FileReader();
+                fileInfo.textContent = `File: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                
+                reader.onload = function(e) {
+                    const base64 = e.target.result;
+                    filePreview.classList.remove('d-none');
+                    filePreview.querySelector('pre').textContent = base64;
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            // Drag and drop for files
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+            
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file) handleFile(file);
+            });
+            
+            dropZone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) handleFile(file);
+            });
+            
+            // Image handling
+            function handleImage(file) {
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select an image file');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.classList.remove('d-none');
+                    imagePreview.querySelector('img').src = e.target.result;
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            // Drag and drop for images
+            imageDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                imageDropZone.classList.add('dragover');
+            });
+            
+            imageDropZone.addEventListener('dragleave', () => {
+                imageDropZone.classList.remove('dragover');
+            });
+            
+            imageDropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                imageDropZone.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file) handleImage(file);
+            });
+            
+            imageDropZone.addEventListener('click', () => imageInput.click());
+            imageInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) handleImage(file);
+            });
+            
+            // Copy buttons
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const target = document.getElementById(btn.dataset.target);
+                    target.select();
+                    document.execCommand('copy');
+                    
+                    // Show feedback
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => btn.innerHTML = originalText, 1000);
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
